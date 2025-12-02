@@ -1,18 +1,36 @@
-resource "aws_instance" "frontend1" {
-  ami           = "ami-09c813fb71547fc4f"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [
-      "sg-056bd46848ffb08a9"
-    ]
+resource "aws_instance" "instances" {
+  for_each      = var.components
+  ami           = var.ami
+  instance_type = var.instance_type
+  vpc_security_group_ids = var.vpc_security_group_ids
 
   tags = {
-    Name = "frontend1"
+    Name = each.key
   }
-}
-resource "aws_route53_record" "www" {
-    zone_id= "Z018624414H1YR1TZOP35"
-    name = "test"
-    type = "A"
-    ttl = "300"
-    records = [aws_instance.frontend1.private_ip]
+
+  provisioner "remote-exec" {
+    connection {
+      type     = "ssh"
+      user     = "ec2-user"
+      password = "DevOps321"
+      host     = self.private_ip
     }
+
+    inline = [
+      "sudo dnf install python3.13-pip -y",
+      "sudo pip3.11 install ansible",
+      "ansible-pull -i localhost, -U https://github.com/raghudevopsb87/roboshop-ansible-templates.git main.yml -e component=${each.key} -e env=dev"
+    ]
+
+  }
+
+}
+
+resource "aws_route53_record" "a-records" {
+  for_each      = var.components
+  zone_id = var.zone_id
+  name    = "${each.key}-dev"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.instances[each.key].private_ip]
+}
