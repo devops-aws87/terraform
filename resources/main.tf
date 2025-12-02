@@ -14,5 +14,5 @@ resource "aws_route53_record" "www" {
     name = "test"
     type = "A"
     ttl = "300"
-    records = [aws_instance.frontend.private_ip]
+    records = [aws_instance.frontend1.private_ip]
     }
