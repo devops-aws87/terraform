@@ -7,6 +7,16 @@ data "aws_ami" "example" {
   owners = [973714476881]
 }
 
+data "aws_security_groups" "test" {
+  filter {
+    name   = "group-name"
+    values = ["Allow-all"]
+  }
+
+}
+output "securityout" "secOut" {
+  value = data.aws_security_groups.test
+}
 output "amioutput" {
   value = data.aws_ami.example
 }
