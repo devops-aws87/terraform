@@ -14,13 +14,19 @@ data "aws_security_groups" "test" {
   }
 
 }
-output "securityout" {
-  value = data.aws_security_groups.test
-}
-output "amioutput" {
-  value = data.aws_ami.example
-}
+#output "securityout" {
+#value = data.aws_security_groups.test
+#}
+#output "amioutput" {
+ # value = data.aws_ami.example
+#}
 
 provider "aws" {
   region = "us-east-1"
+}
+
+resource "aws_instace" "instance" {
+  ami = data.aws_ami.example.image_id
+  instance_type = "t2.micro"
+  vpc_security_group_ids = [data.aws_security_groups.test.id]
 }
