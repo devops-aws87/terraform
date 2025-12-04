@@ -14,7 +14,7 @@ data "aws_security_groups" "test" {
   }
 
 }
-output "securityout" "secOut" {
+output "securityout" {
   value = data.aws_security_groups.test
 }
 output "amioutput" {
