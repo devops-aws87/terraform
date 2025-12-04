@@ -25,7 +25,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "instance" {
+resource "aws_instance" "sample" {
   ami = data.aws_ami.example.image_id
   instance_type = "t2.micro"
   vpc_security_group_ids = [data.aws_security_groups.test.id]
