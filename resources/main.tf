@@ -7,7 +7,7 @@ resource "aws_instance" "instances" {
   tags = {
     Name = each.key
   }
-
+}
 
 resource "aws_route53_record" "a-records" {
   for_each      = var.components
@@ -42,4 +42,3 @@ resource "null_resource" "ansible" {
 
     }
 
-    }
