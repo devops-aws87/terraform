@@ -2,7 +2,7 @@ data "aws_ami" "example" {
 
   filter {
     name = "name"
-    values = ["ami-09c813fb71547fc4f"]
+    values = ["RHEL-9-DevOps-Practice"]
   }
   owners = [973714476881]
 }
