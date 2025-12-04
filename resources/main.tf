@@ -8,23 +8,6 @@ resource "aws_instance" "instances" {
     Name = each.key
   }
 
-  provisioner "remote-exec" {
-    connection {
-      type     = "ssh"
-      user     = "ec2-user"
-      password = "DevOps321"
-      host     = self.private_ip
-    }
-
-    inline = [
-      "sudo dnf install python3.13-pip -y",
-      "sudo pip3.11 install ansible",
-      "ansible-pull -i localhost, -U https://github.com/raghudevopsb87/roboshop-ansible-templates.git main.yml -e component=${each.key} -e env=dev"
-    ]
-
-  }
-
-}
 
 resource "aws_route53_record" "a-records" {
   for_each      = var.components
@@ -34,3 +17,29 @@ resource "aws_route53_record" "a-records" {
   ttl     = 30
   records = [aws_instance.instances[each.key].private_ip]
 }
+
+resource "null_resource" "ansible" {
+    for_each      = var.components
+    depends_on = [
+        aws_instance.instances,
+        aws_route53_record.a-records
+        ]
+      provisioner "remote-exec" {
+        connection {
+          type     = "ssh"
+          user     = "ec2-user"
+          password = "DevOps321"
+          host     = self.private_ip
+        }
+
+        inline = [
+          "sudo dnf install python3.13-pip -y",
+          "sudo pip3.11 install ansible",
+          "ansible-pull -i localhost, -U https://github.com/raghudevopsb87/roboshop-ansible-templates.git main.yml -e component=${each.key} -e env=dev"
+        ]
+
+      }
+
+    }
+
+    }
